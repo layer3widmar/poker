@@ -1,6 +1,3 @@
-// const HandFactory = require('./hand_factory');
-// import {HandFactory} from './hand_factory';
-
 /**
  * A hand is a set of 5 cards.
  */

@@ -11,7 +11,6 @@
  * ASSUMPTIONS:
  *  case matters.   wrong case will be rejected as invalid.
  */
-
 class Card {
 
   // @ranksuit is concatenation of rank char and suit char
