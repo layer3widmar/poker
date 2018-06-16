@@ -12,20 +12,25 @@
  *  case matters.   wrong case will be rejected as invalid.
  */
 
-// var  = Object.freeze ({ monday: {}, tuesday: {}, ... }
 class Card {
 
   // @ranksuit is concatenation of rank char and suit char
   constructor(ranksuit) {
 
-    const re_match = /^([2-9TJQKA])([CDHS])$/.exec(ranksuit);
+    const re_match = /^([2-9TJQKA])([CDHS])$/i.exec(ranksuit);
 
     if( !(re_match && re_match.length == 3) ) 
       throw RangeError(`ranksuit must be 2-char combination of rank and suit; it is ${ranksuit}`);
 
     [,this.rank,this.suit] = re_match;
 
+    this.rank = this.rank.toUpperCase();
+    this.suit = this.suit.toUpperCase();
+
     this.numeric_rank = Card.get_rank_num(this.rank);
+
+    if (Card.check_duplicates)
+      Card.ensure_no_duplicates(this);
   }
 
   /* return numeric rank based on rank string
@@ -48,6 +53,26 @@ class Card {
       case 'A': 
         return 14;
     }
+  }
+
+  /**
+   * Ensure no duplicate cards.
+   */
+  static ensure_no_duplicates(card) {
+
+    // create map of unique cards, or reset it if already full (from prior run).
+    if( !Card.uniques ) {
+      Card.reset_duplicate_check();
+    }
+
+    const key = card.toString();
+    if( Card.uniques[key] ) throw "Duplicate card found.  Not a valid poker game!";
+
+    Card.uniques[key] = true;
+  }
+
+  static reset_duplicate_check() {
+    Card.uniques = Object.create(null);
   }
 
   toString() {

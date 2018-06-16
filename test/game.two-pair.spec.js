@@ -23,15 +23,22 @@ describe('Poker Game', function() {
 
     describe('Two Pair v Two Pair', function() {
 
-      it('shows Ace-Deuce beats King-Trey', function() {
+      it('hi pair: shows Ace-Deuce beats King-Trey', function() {
         const cards = '2H 2D 5S AC AD KC 3H 3S 8C KH';
         const actual = game.play(cards);
         const expected = 'Black wins.';
         expect(actual).to.equal(expected);
       });
 
-      it('shows Jack-Deuce (Ace) ties Jack-Deuce (Ace) ', function() {
-        const cards = '2H 2D JS AC JD JC AH JS 2C 2H';
+      it('lo pair: shows Ace-Deuce loses to Ace-Trey', function() {
+        const cards = '2H 2D 5S AC AD AH 3H 3S 8C AS';
+        const actual = game.play(cards);
+        const expected = 'White wins.';
+        expect(actual).to.equal(expected);
+      });
+
+      it('tie: shows Jack-Deuce (Ace) ties Jack-Deuce (Ace) ', function() {
+        const cards = '2H 2D JS AC JD JC AH JH 2C 2S';
         const actual = game.play(cards);
         const expected = 'Tie.';
         expect(actual).to.equal(expected);

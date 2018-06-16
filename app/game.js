@@ -1,5 +1,6 @@
 const Player = require('./player');
 const HandFactory = require('./hand_factory');
+const Card = require('./card');
 
 /*
  * A poker game.
@@ -28,23 +29,37 @@ class Game {
     if( !((typeof card_str === 'string' || card_str instanceof String) && card_str.length === 29) ) 
       throw RangeError('must provide a string containing 10 2-char cards, no spaces before or after');
 
-    const cards = card_str.split(' ');
-
-    // give player 1 the first 5 cards, player 2 the last 5 cards.
-    const hand1 = HandFactory.make_hand(cards.slice(0,5)),
-          hand2 = HandFactory.make_hand(cards.slice(5));
-
-    this.players[0].deal(hand1);
-    this.players[1].deal(hand2);
+    Card.check_duplicates = true;
+    Card.reset_duplicate_check();
 
     let result;
-    const compare_result = Player.rank_hands(...this.players);
-    if( compare_result ) { // will be truthy if not a tie, 1 if 1st player (Black) or -1 if 2nd player (White)
-      const winner = compare_result > 0 ? this.players[0] : this.players[1];
-      result = `${winner.name} wins.`;
-    } else {
-      result = 'Tie.';
+    const cards = card_str.split(' ');
+
+    try { // make sure duplicate check 
+
+      // give player 1 the first 5 cards, player 2 the last 5 cards.
+      const hand1 = HandFactory.make_hand(cards.slice(0,5)),
+            hand2 = HandFactory.make_hand(cards.slice(5));
+
+      this.players[0].deal(hand1);
+      this.players[1].deal(hand2);
+
+      const compare_result = Player.rank_hands(...this.players);
+
+      if( compare_result ) { // will be truthy if not a tie, 1 if 1st player (Black) or -1 if 2nd player (White)
+        const winner = compare_result > 0 ? this.players[0] : this.players[1];
+        result = `${winner.name} wins.`;
+      } else {
+        result = 'Tie.';
+      }
+
+    } catch(e) {
+      Card.reset_duplicate_check();
+      throw e;
+    } finally {
+      Card.check_duplicates = false;
     }
+
     return result;
   }
 

@@ -26,11 +26,6 @@ describe("Poker Card", function() {
       expect(expect_throw).to.throw(RangeError);
     });
 
-    it('handles wrong case for otherwise valid card', function() {
-      const expect_throw = function() { new Card('aS'); };
-      expect(expect_throw).to.throw(RangeError);
-    });
-
   });
 
   describe("Valid Card", function() {
@@ -49,6 +44,13 @@ describe("Poker Card", function() {
 
       expect(card.rank).to.equal('3');
       expect(card.suit).to.equal('D');
+    });
+
+    it('handles wrong case for otherwise valid card', function() {
+      const card = new Card('as');
+
+      expect(card.rank).to.equal('A');
+      expect(card.suit).to.equal('S');
     });
 
   });
